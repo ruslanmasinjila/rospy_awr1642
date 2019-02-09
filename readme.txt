@@ -19,6 +19,7 @@ NODES:
 	/static_tf_map_to_base_radar_link
 
 	TOPICS:
+	--------
 		/clicked_point
 		/initialpose
 		/mmWaveDataHdl/RScan
@@ -27,5 +28,11 @@ NODES:
 		/rosout_agg
 		/tf
 		/tf_static
+
+
+TODO:
+------
+> Create a 0.5m x 0.5m x 0.5m "invisible cube" about 2 meters away from radar for data collection. 
+Visually provide some feedback on the presence or absence of objects within the cube.														
 
 

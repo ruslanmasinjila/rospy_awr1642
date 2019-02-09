@@ -25,7 +25,6 @@ class awr1642():
 
 
 	def pointCloud2_cb(self,pointCloud2_data):
-
 		#print pointCloud2_data
 		cloud= read_points(pointCloud2_data, skip_nans=False,field_names = ("x", "y"))
 
@@ -34,6 +33,7 @@ class awr1642():
 			pt = list(pt)
 			pt.append(1)
 			points.append(pt)
+
 
 		print points
 
