@@ -1,0 +1,1 @@
+awr1642="roslaunch awr1642 awr1642.launch" && "roslaunch ti_mmwave_rospkg rviz_1642_2d.launch"
