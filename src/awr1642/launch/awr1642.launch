@@ -1,0 +1,5 @@
+<launch>
+
+<node pkg="awr1642" type="awr1642.py" name="awr1642" output="screen"/>
+
+</launch>
