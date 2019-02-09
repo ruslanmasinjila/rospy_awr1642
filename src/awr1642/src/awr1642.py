@@ -22,20 +22,31 @@ class awr1642():
 	def __init__(self):
 		print "awr1642 running..."
 		self.pointCloud2_subscriber=rospy.Subscriber("/mmWaveDataHdl/RScan",PointCloud2,self.pointCloud2_cb)
+		self.points=None
 
 
 	def pointCloud2_cb(self,pointCloud2_data):
-		#print pointCloud2_data
+
 		cloud= read_points(pointCloud2_data, skip_nans=False,field_names = ("x", "y"))
 
-		points = []
+		self.points = []
 		for pt in cloud:
 			pt = list(pt)
 			pt.append(1)
-			points.append(pt)
+			self.points.append(pt)
 
+		# Crop the data for training
+		self.invisibleCube()
 
-		print points
+	def invisibleCube(self):
+ 		xNear=0.5
+		xFar=1.0
+		yNegative=-0.25
+		yPositive=0.25
+		for i in self.points:
+			if i[0]>=xNear and i[0]<=xFar and i[1]>=yNegative and i[1]<=yPositive:
+				print i
+
 
 
 
