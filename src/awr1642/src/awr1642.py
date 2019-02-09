@@ -6,14 +6,15 @@ from __future__ import division
 import rospy
 import roslib; 
 import sys 
-from std_msgs.msg import String
-from cv_bridge import CvBridge, CvBridgeError
 from std_msgs.msg import *
 from sensor_msgs.msg import *
-#from point_cloud2 import *
-from numpy import *
-#from matplotlib.pyplot import *
-from time import *
+from sensor_msgs.point_cloud2 import *
+from pcl_ros import *
+
+# Future Imports
+# from matplotlib.pyplot import *
+# from numpy import *
+# from time import *
 
 
 class awr1642():
@@ -24,7 +25,17 @@ class awr1642():
 
 
 	def pointCloud2_cb(self,pointCloud2_data):
-		print pointCloud2_data
+
+		#print pointCloud2_data
+		cloud= read_points(pointCloud2_data, skip_nans=False,field_names = ("x", "y"))
+
+		points = []
+		for pt in cloud:
+			pt = list(pt)
+			pt.append(1)
+			points.append(pt)
+
+		print points
 
 
 
