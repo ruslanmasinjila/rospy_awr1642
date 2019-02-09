@@ -1,0 +1,8 @@
+prefix=/home/ruslan/catkin_ws/devel
+
+Name: awr1642
+Description: Description of awr1642
+Version: 0.0.0
+Cflags: 
+Libs: -L/home/ruslan/catkin_ws/devel/lib 
+Requires: 
