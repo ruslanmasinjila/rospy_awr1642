@@ -9,7 +9,7 @@ import sys
 from std_msgs.msg import *
 from sensor_msgs.msg import *
 from sensor_msgs.point_cloud2 import *
-from pcl_ros import *
+import pcl_ros as pcl
 
 ################## NUMPY AND MATPLOTLIB #########################
 import numpy as np
@@ -37,16 +37,9 @@ class awr1642():
 
 	def pointCloud2_cb(self,pointCloud2_data):
 
-		cloud= read_points(pointCloud2_data, skip_nans=True,field_names = ("x", "y"))
-
-		points = []
-		for pt in cloud:
-			pt = list(pt)
-			pt.append(1)
-			points.append(pt)
-
-		# Crop the data for training
-		self.invisibleCube(points)
+		cloud= list(read_points(pointCloud2_data,field_names = ("x", "y","z","intensity")))
+		self.invisibleCube(cloud)
+		print cloud
 
 
 	def invisibleCube(self,points):
@@ -64,9 +57,7 @@ class awr1642():
 				count=count+1
 				self.xCoordinates.append(i[0])
 				self.yCoordinates.append(i[1])
-
-			print count
-
+		print count
 
 
 def main():
