@@ -242,16 +242,13 @@ def readAndParseData16xx(Dataport, configParameters):
                 #y[y > 32767] = y[y > 32767] - 65536
                 #z[z > 32767] = z[z > 32767] - 65536
                 x = x / tlv_xyzQFormat
-
                 y = y / tlv_xyzQFormat
-
                 z = z / tlv_xyzQFormat
                 
                 # Store the data in the detObj dictionary
                 detObj = {"numObj": tlv_numObj, "rangeIdx": rangeIdx, "range": rangeVal, "dopplerIdx": dopplerIdx, \
                           "doppler": dopplerVal, "peakVal": peakVal, "x": x, "y": y, "z": z}
 
-		print detObj
                 
                 dataOK = 1
 
@@ -289,9 +286,19 @@ def update():
      
     dataOk = 0
     global detObj
+    x = []
+    y = []
       
     # Read and parse the received data
     dataOk, frameNumber, detObj = readAndParseData16xx(Dataport, configParameters)
+    
+    if dataOk:
+        #print(detObj)
+        x = -detObj["x"]
+        y = detObj["y"]
+        
+    s.setData(x,y)
+    QtGui.QApplication.processEvents()
     
     return dataOk
 
@@ -304,6 +311,19 @@ CLIport, Dataport = serialConfig(configFileName)
 # Get the configuration parameters from the configuration file
 configParameters = parseConfigFile(configFileName)
 
+# START QtAPPfor the plot
+app = QtGui.QApplication([])
+
+# Set the plot 
+pg.setConfigOption('background','w')
+win = pg.GraphicsWindow(title="2D scatter plot")
+p = win.addPlot()
+p.setXRange(-0.5,0.5)
+p.setYRange(0,1.5)
+p.setLabel('left',text = 'Y position (m)')
+p.setLabel('bottom', text= 'X position (m)')
+s = p.plot([],[],pen=None,symbol='o')
+    
    
 # Main loop 
 detObj = {}  
@@ -318,7 +338,10 @@ while True:
             # Store the current frame into frameData
             frameData[currentIndex] = detObj
             currentIndex += 1
-        
+	print frameData
+	text_file = open("Output.txt", "w")
+	text_file.write("Purchase Amount: %s\n" % frameData)
+	text_file.close()
         time.sleep(0.033) # Sampling frequency of 30 Hz
         
     # Stop the program and close everything if Ctrl + c is pressed
@@ -326,7 +349,7 @@ while True:
         CLIport.write(('sensorStop\n').encode())
         CLIport.close()
         Dataport.close()
-        #win.close()
+        win.close()
         break
         
     
