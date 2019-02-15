@@ -1,4 +1,4 @@
-
+from __future__ import division
 import serial
 import time
 import numpy as np
@@ -242,12 +242,16 @@ def readAndParseData16xx(Dataport, configParameters):
                 #y[y > 32767] = y[y > 32767] - 65536
                 #z[z > 32767] = z[z > 32767] - 65536
                 x = x / tlv_xyzQFormat
+
                 y = y / tlv_xyzQFormat
+
                 z = z / tlv_xyzQFormat
                 
                 # Store the data in the detObj dictionary
                 detObj = {"numObj": tlv_numObj, "rangeIdx": rangeIdx, "range": rangeVal, "dopplerIdx": dopplerIdx, \
                           "doppler": dopplerVal, "peakVal": peakVal, "x": x, "y": y, "z": z}
+
+		print detObj
                 
                 dataOK = 1
 
@@ -314,7 +318,6 @@ while True:
             # Store the current frame into frameData
             frameData[currentIndex] = detObj
             currentIndex += 1
-	    print currentIndex
         
         time.sleep(0.033) # Sampling frequency of 30 Hz
         
