@@ -12,7 +12,8 @@ import os
 import csv
 
 # Change the configuration file name
-gestureName="waving"
+
+
 configFileName = 'profile1.cfg'
 CLIport = {}
 Dataport = {}
@@ -89,6 +90,8 @@ def parseConfigFile(configFileName):
             
     # Combine the read data to obtain the configuration parameters           
     numChirpsPerFrame = (chirpEndIdx - chirpStartIdx + 1) * numLoops
+
+    global configParameters
     configParameters["numDopplerBins"] = numChirpsPerFrame / numTxAnt
     configParameters["numRangeBins"] = numAdcSamplesRoundTo2
     configParameters["rangeResolutionMeters"] = (3e8 * digOutSampleRate * 1e3) / (2 * freqSlopeConst * 1e12 * numAdcSamples)
@@ -295,99 +298,95 @@ def update():
      
     dataOk = 0
     global detObj
-    x = []
-    y = []
+
       
     # Read and parse the received data
     dataOk, frameNumber, detObj = readAndParseData16xx(Dataport, configParameters)
     
     if dataOk:
-        #print(detObj)
-        x = -detObj["x"]
-        y = detObj["y"]
-        
-    s.setData(x,y)
-    QtGui.QApplication.processEvents()
+	None;
     
     return dataOk
 
 
 # -------------------------    MAIN   -----------------------------------------  
 
-# Configurate the serial port
-CLIport, Dataport = serialConfig(configFileName)
+def main():
 
-# Get the configuration parameters from the configuration file
-configParameters = parseConfigFile(configFileName)
-
-# START QtAPPfor the plot
-app = QtGui.QApplication([])
-
-# Set the plot 
-pg.setConfigOption('background','w')
-win = pg.GraphicsWindow(title="2D scatter plot")
-p = win.addPlot()
-p.setXRange(-0.5,0.5)
-p.setYRange(0,1.5)
-p.setLabel('left',text = 'Y position (m)')
-p.setLabel('bottom', text= 'X position (m)')
-s = p.plot([],[],pen=None,symbol='o')
-    
-   
-# Main loop 
-detObj = {}  
-frameData = {}    
-currentIndex=0
-
-# Number of frames required fro training
-numTrainingFrames=49
-while currentIndex<=numTrainingFrames:
-    try:
-        # Update the data and check if the data is okay
-        dataOk = update()
-        
-        if dataOk:
-            # Store the current frame into frameData
-            frameData[currentIndex] = detObj
-            currentIndex += 1
-        time.sleep(0.033) # Sampling frequency of 30 Hz
-        
-    # Stop the program and close everything if Ctrl + c is pressed
-    except KeyboardInterrupt:
-        CLIport.write(('sensorStop\n').encode())
-        CLIport.close()
-        Dataport.close()
-        win.close()
-        break
-
-
-cwd = os.getcwd()
-captureDir=cwd+"/capture_results/"
 	
-
-for i in range(len(frameList)):
-	frameNumber=str(i)
-
-	# Save data as individual ndarrays
-	np.save(captureDir+gestureName+frameNumber,frameList[i])
-
-	# Save frames as individual .csv files
-	#w = csv.writer(open(captureDir+gestureName+frameNumber+".csv", "w"))
-	#for key, val in frameList[i].items():
-	#	w.writerow([key,val])
+	gesture_name="waving"
 
 
-#text_file = open(cwd+"/output/output.txt", "w")
-#text_file.write("%s" % frameData)
-#text_file.close()
-#print type(frameList[0])
-#print len(frameList)
-#print(range(len(frameList)))
+	# Configurate the serial port
+	CLIport, Dataport = serialConfig(configFileName)
 
-        
-    
+	# Get the configuration parameters from the configuration file
+	configParameters = parseConfigFile(configFileName)
+	    
+	   
+	# Main loop 
+	detObj = {}  
+	frameData = {}    
+	currentIndex=0
+
+	# Number of frames required fro training
+	numTrainingFrames=1
+	while currentIndex<=numTrainingFrames:
+	    try:
+		# Update the data and check if the data is okay
+		dataOk = update()
+		
+		if dataOk:
+		    # Store the current frame into frameData
+		    frameData[currentIndex] = detObj
+		    currentIndex += 1
+		time.sleep(0.033) # Sampling frequency of 30 Hz
+		
+	    # Stop the program and close everything if Ctrl + c is pressed
+	    except KeyboardInterrupt:
+		CLIport.write(('sensorStop\n').encode())
+		CLIport.close()
+		Dataport.close()
+		break
 
 
+	################################################################################
+
+	# Get current working directory for training gesture
+	# Remove exising training data from the directory 
+
+	training_data = os.getcwd()+"/training_data/"+gesture_name
+
+	try:  
+	    os.rmdir(training_data)
+	except OSError:  
+	    print ("The path %s" % training_data + " does not exist. Creating new one")
+	else:  
+	    print ("Successfully deleted the directory %s" % training_data)
+
+	###############################################################################
+
+	# Create new folder for current gesture name
+
+	training_data = os.getcwd()+"/training_data/"+gesture_name+"/"
+
+	try:  
+	    os.mkdir(training_data)
+	except OSError:  
+	    print ("Creation of the directory %s failed" % training_data)
+	else:  
+	    print ("Successfully created the directory %s " % training_data)
+
+	###############################################################################
+		
+
+	for i in range(len(frameList)):
+		frameNumber=str(i)
+		path=training_data+frameNumber
+
+		# Save data as individual ndarrays
+		np.save(path,frameList[i])
 
 
-
+if __name__== "__main__":
+  main()
