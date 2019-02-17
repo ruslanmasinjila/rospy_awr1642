@@ -1,11 +1,18 @@
+# Cloned from https://github.com/ibaiGorordo/AWR1642-Read-Data-Python-
+#######################################################################
+#######################################################################
+
 from __future__ import division
 import serial
 import time
 import numpy as np
 import pyqtgraph as pg
 from pyqtgraph.Qt import QtGui
+import os
+import csv
 
 # Change the configuration file name
+gestureName="waving"
 configFileName = 'profile1.cfg'
 CLIport = {}
 Dataport = {}
@@ -351,11 +358,26 @@ while True:
         Dataport.close()
         win.close()
 
-	#text_file = open("output.txt", "w")
+	cwd = os.getcwd()
+	captureDir=cwd+"/capture_results/"
+
+	for i in range(len(frameList)):
+		frameNumber=str(i)
+		w = csv.writer(open(captureDir+gestureName+frameNumber+".csv", "w"))
+		for key, val in frameList[i].items():
+			w.writerow([key,val])
+		
+
+		#frameNumber=str(i)
+		#np.save(captureDir+gestureName+frameNumber,frameList[i])
+		#print type(frameList[i])
+
+	#text_file = open(cwd+"/output/output.txt", "w")
 	#text_file.write("%s" % frameData)
 	#text_file.close()
-	print type(frameList[0])
-	print(len(frameList))
+	#print type(frameList[0])
+	#print len(frameList)
+	#print(range(len(frameList)))
         break
         
     
