@@ -12,8 +12,6 @@ import os
 import csv
 
 # Change the configuration file name
-
-
 configFileName = 'profile1.cfg'
 CLIport = {}
 Dataport = {}
@@ -199,7 +197,6 @@ def readAndParseData16xx(Dataport, configParameters):
         # Read the TLV messages
         for tlvIdx in range(numTLVs):
 
-
             
             # word array to convert 4 bytes to a 32 bit number
             word = [1, 2**8, 2**16, 2**24]
@@ -263,18 +260,9 @@ def readAndParseData16xx(Dataport, configParameters):
 		frameList.append(detObj)
 
                 dataOK = 1
-
-
-		
-
-                
-                #print(detObj['range'].mean())
                 
             elif tlv_type == MMWDEMO_UART_MSG_RANGE_PROFILE:
                 idX += tlv_length
-                
-        
-                
         
         # Remove already processed data
         if idX > 0 and dataOK == 1:
