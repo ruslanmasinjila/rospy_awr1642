@@ -9,6 +9,7 @@ from pyqtgraph.Qt import QtGui
 configFileName = 'profile1.cfg'
 CLIport = {}
 Dataport = {}
+frameList=[]
 
 
 # ------------------------------------------------------------------
@@ -249,7 +250,8 @@ def readAndParseData16xx(Dataport, configParameters):
                 detObj = {"numObj": tlv_numObj, "rangeIdx": rangeIdx, "range": rangeVal, "dopplerIdx": dopplerIdx, \
                           "doppler": dopplerVal, "peakVal": peakVal, "x": x, "y": y, "z": z}
 
-                
+		frameList.append(detObj)
+
                 dataOK = 1
 
 
@@ -328,7 +330,7 @@ s = p.plot([],[],pen=None,symbol='o')
 # Main loop 
 detObj = {}  
 frameData = {}    
-currentIndex = 0
+currentIndex=0
 while True:
     try:
         # Update the data and check if the data is okay
@@ -338,10 +340,8 @@ while True:
             # Store the current frame into frameData
             frameData[currentIndex] = detObj
             currentIndex += 1
-	print frameData
-	text_file = open("Output.txt", "w")
-	text_file.write("Purchase Amount: %s\n" % frameData)
-	text_file.close()
+
+
         time.sleep(0.033) # Sampling frequency of 30 Hz
         
     # Stop the program and close everything if Ctrl + c is pressed
@@ -350,6 +350,12 @@ while True:
         CLIport.close()
         Dataport.close()
         win.close()
+
+	#text_file = open("output.txt", "w")
+	#text_file.write("%s" % frameData)
+	#text_file.close()
+	print type(frameList[0])
+	print(len(frameList))
         break
         
     
