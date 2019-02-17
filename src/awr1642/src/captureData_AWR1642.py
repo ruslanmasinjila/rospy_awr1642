@@ -338,7 +338,10 @@ s = p.plot([],[],pen=None,symbol='o')
 detObj = {}  
 frameData = {}    
 currentIndex=0
-while True:
+
+# Number of frames required fro training
+numTrainingFrames=49
+while currentIndex<=numTrainingFrames:
     try:
         # Update the data and check if the data is okay
         dataOk = update()
@@ -347,8 +350,6 @@ while True:
             # Store the current frame into frameData
             frameData[currentIndex] = detObj
             currentIndex += 1
-
-
         time.sleep(0.033) # Sampling frequency of 30 Hz
         
     # Stop the program and close everything if Ctrl + c is pressed
@@ -357,28 +358,32 @@ while True:
         CLIport.close()
         Dataport.close()
         win.close()
-
-	cwd = os.getcwd()
-	captureDir=cwd+"/capture_results/"
-
-	for i in range(len(frameList)):
-		frameNumber=str(i)
-
-		# Save frames as individual .csv files
-		#w = csv.writer(open(captureDir+gestureName+frameNumber+".csv", "w"))
-		#for key, val in frameList[i].items():
-		#	w.writerow([key,val])
-
-		# Save data as individual ndarrays
-		np.save(captureDir+gestureName+frameNumber,frameList[i])
-
-	#text_file = open(cwd+"/output/output.txt", "w")
-	#text_file.write("%s" % frameData)
-	#text_file.close()
-	#print type(frameList[0])
-	#print len(frameList)
-	#print(range(len(frameList)))
         break
+
+
+cwd = os.getcwd()
+captureDir=cwd+"/capture_results/"
+	
+
+for i in range(len(frameList)):
+	frameNumber=str(i)
+
+	# Save data as individual ndarrays
+	np.save(captureDir+gestureName+frameNumber,frameList[i])
+
+	# Save frames as individual .csv files
+	#w = csv.writer(open(captureDir+gestureName+frameNumber+".csv", "w"))
+	#for key, val in frameList[i].items():
+	#	w.writerow([key,val])
+
+
+#text_file = open(cwd+"/output/output.txt", "w")
+#text_file.write("%s" % frameData)
+#text_file.close()
+#print type(frameList[0])
+#print len(frameList)
+#print(range(len(frameList)))
+
         
     
 

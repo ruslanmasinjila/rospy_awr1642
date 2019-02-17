@@ -15,10 +15,14 @@ lst = os.listdir(captureDir)
 number_of_frames=len(lst)
 frameList=[]
 
+print number_of_frames
+
 for i in range(number_of_frames):
 	frameNumber=str(i)
 	data=np.load(captureDir+gestureName+frameNumber+".npy")
 
 	dataItem=data.item(0)
 	frameList.append(dataItem)
-	#print(frameList[-1]['peakVal'])
+
+	# frameList is a list of dictionaries 
+	print(frameList[-1])
