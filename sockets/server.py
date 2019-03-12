@@ -11,7 +11,7 @@ with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
 		print('Connected by', addr)
 		while True:
 			data = conn.recv(1024)
-			print(data)
+			print(data.decode('utf-8'))
 			if not data:
 				break
 			conn.sendall(data)
